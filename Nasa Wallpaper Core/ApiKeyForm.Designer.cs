@@ -29,6 +29,7 @@ namespace Nasa_Wallpaper_framework_app
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ApiKeyForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.enterBtn = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -43,21 +44,23 @@ namespace Nasa_Wallpaper_framework_app
             this.tableLayoutPanel1.Controls.Add(this.enterBtn, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.linkLabel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.apiTextBox, 0, 1);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(14, 14);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 129F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 97F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(385, 281);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 149F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 112F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(449, 324);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // enterBtn
             // 
             this.enterBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.enterBtn.Location = new System.Drawing.Point(3, 221);
+            this.enterBtn.Location = new System.Drawing.Point(4, 254);
+            this.enterBtn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.enterBtn.Name = "enterBtn";
-            this.enterBtn.Size = new System.Drawing.Size(379, 23);
+            this.enterBtn.Size = new System.Drawing.Size(441, 27);
             this.enterBtn.TabIndex = 0;
             this.enterBtn.Text = "Enter";
             this.enterBtn.UseVisualStyleBackColor = true;
@@ -67,31 +70,35 @@ namespace Nasa_Wallpaper_framework_app
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(3, 21);
+            this.linkLabel1.Location = new System.Drawing.Point(4, 24);
+            this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(379, 13);
+            this.linkLabel1.Size = new System.Drawing.Size(441, 15);
             this.linkLabel1.TabIndex = 1;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "https://api.nasa.gov/";
+            this.linkLabel1.Text = "Get api key here: https://api.nasa.gov/";
             this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // apiTextBox
             // 
             this.apiTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.apiTextBox.Location = new System.Drawing.Point(3, 109);
+            this.apiTextBox.Location = new System.Drawing.Point(4, 126);
+            this.apiTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.apiTextBox.Name = "apiTextBox";
-            this.apiTextBox.Size = new System.Drawing.Size(379, 20);
+            this.apiTextBox.Size = new System.Drawing.Size(441, 23);
             this.apiTextBox.TabIndex = 2;
             // 
             // ApiKeyForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(409, 305);
+            this.ClientSize = new System.Drawing.Size(477, 352);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ApiKeyForm";
-            this.Text = "Form1";
+            this.Text = "Enter api key";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
