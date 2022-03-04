@@ -29,7 +29,11 @@ namespace Nasa_Wallpaper_framework_app
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://api.nasa.gov/");
+            var uri = "https://api.nasa.gov/";
+            var psi = new System.Diagnostics.ProcessStartInfo();
+            psi.UseShellExecute = true;
+            psi.FileName = uri;
+            System.Diagnostics.Process.Start(psi);
         }
     }
 }

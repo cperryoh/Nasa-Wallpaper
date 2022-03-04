@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Nasa Wallpaper Core": {
+      "commandName": "Project"
+    },
+    "Run published app": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\perryca\\source\\repos\\Nasa Wallpaper Core\\Nasa Wallpaper Core\\publish\\Nasa Wallpaper Core.exe",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
 
 namespace Nasa_Wallpaper_framework_app
 {
@@ -18,6 +19,7 @@ namespace Nasa_Wallpaper_framework_app
         public String date { get; set; }
         public String explanation { get; set; }
         public String hdurl { get; set; }
+        public String title { get; set; }
     }
     [Serializable]
     class ProgramData
@@ -25,6 +27,7 @@ namespace Nasa_Wallpaper_framework_app
         public bool bootOnStart;
         public String url = "";
         public String api = "";
+        public String imgDescription;
     }
     class Program
     {
@@ -87,6 +90,7 @@ namespace Nasa_Wallpaper_framework_app
                 System.Net.WebClient wc = new System.Net.WebClient();
                 string webData = wc.DownloadString("https://" + $"api.nasa.gov/planetary/apod?api_key={info.api}");
                 JSON obj = JsonConvert.DeserializeObject<JSON>(webData);
+                info.imgDescription = obj.title;
                 return obj.hdurl;
             }
             catch (Exception e)
@@ -96,13 +100,18 @@ namespace Nasa_Wallpaper_framework_app
                 return null;
             }
         }
+        static String getCurFileName()
+        {
+            return curDir + $"images\\[{DateTime.Now.ToString("MM-dd-yyyy")}]{info.imgDescription.Replace(' ', '_').Replace(":", "-")}.jpg";
+        }
         static void getImage(String url)
         {
             try
             {
+                String fileName = getCurFileName();
                 using (WebClient webClient = new WebClient())
                 {
-                    webClient.DownloadFile(url, "images\\" + DateTime.Now.ToString("MM-dd-yyyy") + ".jpg");
+                    webClient.DownloadFile(url, fileName);
                 }
             }
             catch (Exception e)
@@ -113,6 +122,7 @@ namespace Nasa_Wallpaper_framework_app
 
 
         //ui functions
+        static ToolStripMenuItem setToPrev;
         static ToolStripMenuItem startOnBoot;
         static void makeTrayIcon()
         {
@@ -121,6 +131,7 @@ namespace Nasa_Wallpaper_framework_app
             trayIcon.Icon = Nasa_Wallpaper_Core.Properties.Resources.icon;
 
             ContextMenuStrip menu = new ContextMenuStrip();
+            menu.VisibleChanged += updatePrevImgs;
             trayIcon.ContextMenuStrip = menu;
 
             ToolStripMenuItem openImagesFolder = new ToolStripMenuItem
@@ -129,6 +140,19 @@ namespace Nasa_Wallpaper_framework_app
             };
             openImagesFolder.Click += new EventHandler(openFolder);
             menu.Items.Add(openImagesFolder);
+
+            ToolStripMenuItem refreshBtn = new ToolStripMenuItem
+            {
+                Text = "Refresh"
+            };
+            refreshBtn.Click += new EventHandler(refreshAction);
+            menu.Items.Add(refreshBtn);
+
+            setToPrev = new ToolStripMenuItem
+            {
+                Text = "Set wallpaper to previous image"
+            };
+            menu.Items.Add(setToPrev);
 
 
             ToolStripMenuItem chgApiKey = new ToolStripMenuItem
@@ -158,10 +182,43 @@ namespace Nasa_Wallpaper_framework_app
             trayIcon.Visible = true;
             Application.Run();
         }
+        private static void updatePrevImgs(object sender, EventArgs e)
+        {
+            if (Directory.Exists(curDir + "images"))
+            {
+                setToPrev.DropDownItems.Clear();
+                foreach(String str in Directory.GetFiles(curDir + "images", "*.jpg"))
+                {
+                    ToolStripMenuItem img = new ToolStripMenuItem
+                    {
+                        Text = str.Substring(str.LastIndexOf("\\")+1)
+                    };
+                    img.Image = Image.FromFile(str);
+                    img.Click += setToPrevAction;
+                    setToPrev.DropDownItems.Add(img);
+                    
+                }
+            }
+        }
 
+        private static void refreshAction(object sender, EventArgs e)
+        {
+            refresh(info.url);
+        }
+        private static void setToPrevAction(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            DisplayPicture(curDir+"images\\"+item.Text);
+        }
         private static void openFolder(object sender, EventArgs e)
         {
-            Process.Start(curDir + "images\\");
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                Arguments = (curDir+"images"),
+                FileName = "explorer.exe"
+            };
+
+            Process.Start(startInfo);
         }
 
         static void getApiKey()
@@ -222,6 +279,7 @@ namespace Nasa_Wallpaper_framework_app
 
         //worker thread
         static String curDir = System.AppContext.BaseDirectory;
+        static bool threadStarted = false;
         public static void updateWallpaper()
         {
             //calc delay time in ms
@@ -238,44 +296,50 @@ namespace Nasa_Wallpaper_framework_app
             getImage(curUrl);
 
             //display image from file
-            DisplayPicture(curDir + "images\\" + DateTime.Now.ToString("MM-dd-yyyy") + ".jpg");
+            DisplayPicture(getCurFileName());
+
+            threadStarted = true;
 
             //log that intial startup is done
             Log(LogType.LOG, "Booted application");
+
             while (true)
             {
                 //delay
                 Thread.Sleep(miliseconds);
 
-                //log
-                Log(LogType.LOG, "Updating app");
-
-                //load new url from api
-                curUrl = getCurUrl();
-
-                //compare new url to cur url
-                if (!curUrl.Equals(info.url) && curUrl != null)
-                {
-                    //if new enter if
-
-                    //log
-                    Log(LogType.LOG, "New image, updating");
-
-                    //store new url
-                    storeData(curUrl);
-
-                    //get image from url
-                    getImage(curUrl);
-
-                    //set wallpaper
-                    DisplayPicture(curDir + "\\images\\" + DateTime.Now.ToString("MM-dd-yyyy") + ".jpg");
-
-                    //delete old images
-                    cleanUpImagesFolder();
-                }
+                refresh(curUrl);
             }
         }
+        public static void refresh(String curUrl)
+        {
+            //log
+            Log(LogType.LOG, "Updating app");
 
+            //load new url from api
+            curUrl = getCurUrl();
+
+            //compare new url to cur url
+            if (!curUrl.Equals(info.url) && curUrl != null)
+            {
+                //if new enter if
+
+                //log
+                Log(LogType.LOG, "New image, updating");
+
+                //store new url
+                storeData(curUrl);
+
+                //get image from url
+                getImage(curUrl);
+
+                //set wallpaper
+                DisplayPicture(getCurFileName());
+
+                //delete old images
+                cleanUpImagesFolder();
+            }
+        }
         //begin wallpaper code
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -312,6 +376,7 @@ namespace Nasa_Wallpaper_framework_app
                 Log(LogType.ERROR, "Unable to boot app... exiting");
                 System.Environment.Exit(0);
             }
+            while (!threadStarted) { }
             makeTrayIcon();
         }
     }
